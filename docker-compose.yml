@@ -1,0 +1,32 @@
+services:
+  deconz:
+    image: deconzcommunity/deconz
+    container_name: deconz
+    restart: unless-stopped
+    ports: 
+      - 1080:1080
+      - 1443:1443
+    volumes:
+      - ./deconz:/opt/deCONZ
+    devices:
+      - /dev/ttyS0
+    environment:
+      - DECONZ_WEB_PORT=1080
+      - DECONZ_WS_PORT=1443
+      - DEBUG_INFO=1
+      - DEBUG_APS=0
+      - DEBUG_ZCL=0
+      - DEBUG_ZDP=0
+      - DEBUG_OTAU=0
+      - DECONZ_DEVICE=/dev/ttyS0
+  homeassistant:
+    container_name: homeassistant
+    image: "ghcr.io/home-assistant/home-assistant:stable"
+    volumes:
+      - ./homeassistant:/config
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
+    privileged: true
+    network_mode: host
+    ports:
+      - 80:80
